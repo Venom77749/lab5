@@ -26,5 +26,6 @@ public:
     static long long task5_productEvenNumbers(const std::string& filename);
 
     static void   fillTextFile(const std::string& filename, int lines);
+    static void fillTextFileUser(const std::string& filename, int lines);
     static int    task6_copyNoLatinLines(const std::string& inputFile, const std::string& outputFile);
 };

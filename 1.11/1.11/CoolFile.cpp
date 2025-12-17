@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cctype>
+#include <limits>
+
 
 void CoolFile::fillFile(const std::string& filename, int count)
 {
@@ -28,8 +30,10 @@ int CoolFile::task1(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::binary);
     int count = 0, num{};
+    std::cout << "Содержимое " << filename << " (int):\n";
 
     while (file.read((char*)&num, sizeof(int))) {
+        std::cout << num << " ";
         if (num % 2 != 0) {
             int root = (int)std::sqrt(num);
             if (root * root == num) {
@@ -37,6 +41,7 @@ int CoolFile::task1(const std::string& filename)
             }
         }
     }
+    std::cout << "\n";
     return count;
 }
 
@@ -46,10 +51,17 @@ int CoolFile::task2(const std::string& filename, int n)
     std::vector<std::vector<int>> matrix(n, std::vector<int>(n, 0));
 
     int num{}, idx = 0;
+    std::cout << "Чтение матрицы " << n << "x" << n << " из " << filename << ":\n";
     while (file.read((char*)&num, sizeof(int)) && idx < n * n) {
         int i = idx / n, j = idx % n;
         matrix[i][j] = num;
         idx++;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j)
+            std::cout <<  matrix[i][j] << '\t';
+        std::cout << "\n";
     }
 
     int bestRow = 0, maxCount = 0;
@@ -91,7 +103,14 @@ std::string CoolFile::task3_mostExpensiveToyUnder4(const std::string& filename)
     std::string result = "";
     double maxPrice = -1;
 
-    while (file.read((char*)&toy, sizeof(Toy))) {
+    std::cout << "Игрушки из файла " << filename << ":\n";
+
+    while (file.read((char*)&toy, sizeof(Toy)))
+    {
+        std::cout << "Название: " << toy.name
+            << ", цена: " << toy.price
+            << ", возраст: " << toy.ageMin << "-" << toy.ageMax << "\n";
+
         if (toy.ageMax <= 4 && toy.price > maxPrice) {
             maxPrice = toy.price;
             result = std::string(toy.name);
@@ -119,14 +138,19 @@ double CoolFile::task4_avgMaxMin(const std::string& filename)
     int minVal = INT_MAX, maxVal = INT_MIN;
     bool hasData = false;
 
+    std::cout << "Числа из " << filename << ":\n";
+
     while (std::getline(file, line)) {
         if (!line.empty()) {
             int num = std::stoi(line);
+            std::cout << num << " ";
             if (num < minVal) minVal = num;
             if (num > maxVal) maxVal = num;
             hasData = true;
         }
     }
+
+    std::cout << std::endl;
 
     if (!hasData) return 0.0;
     return (minVal + maxVal) / 2.0;
@@ -156,8 +180,12 @@ long long CoolFile::task5_productEvenNumbers(const std::string& filename)
     long long product = 1;
     bool hasEven = false;
 
+    std::cout << "Содержимое " << filename << ":\n";
+
     while (std::getline(file, line)) {
         if (line.empty()) continue;
+
+        std::cout << line << "\n";
 
         std::istringstream iss(line);
         int num;
@@ -197,6 +225,23 @@ void CoolFile::fillTextFile(const std::string& filename, int lines)
     std::cout << "Текстовый файл " << filename << " готов (" << lines << " строк)\n";
 }
 
+void CoolFile::fillTextFileUser(const std::string & filename, int lines)
+{
+    std::ofstream file(filename);
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // очистить хвост после ввода числа
+
+    std::cout << "Введите " << lines << " строк(и) текста:\n";
+    std::string line;
+    for (int i = 0; i < lines; ++i) {
+        std::cout << i + 1 << ": ";
+        std::getline(std::cin, line);
+        file << line << std::endl;
+    }
+    file.close();
+    std::cout << "Текстовый файл " << filename << " заполнен вашими строками (" << lines << " строк)\n";
+}
+
+
 int CoolFile::task6_copyNoLatinLines(const std::string& inputFile, const std::string& outputFile)
 {
     std::ifstream in(inputFile);
@@ -204,15 +249,19 @@ int CoolFile::task6_copyNoLatinLines(const std::string& inputFile, const std::st
     std::string line;
     int copiedLines = 0;
 
+    std::cout << "Строки из " << inputFile << ":\n";
+
     while (std::getline(in, line)) {
+        std::cout << line << "\n";
+
         bool hasLatin = false;
-        for (char c : line) {
-            if (std::isalpha((unsigned char)c) &&
-                ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))) {
+        for (unsigned char c : line) {
+            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
                 hasLatin = true;
                 break;
             }
         }
+
 
         if (!hasLatin) {
             out << line << std::endl;
@@ -222,5 +271,14 @@ int CoolFile::task6_copyNoLatinLines(const std::string& inputFile, const std::st
 
     in.close();
     out.close();
+
+
+    std::cout << "\nСтроки без латинских букв (из файла " << outputFile << "):\n";
+    std::ifstream checkOut(outputFile);
+    while (std::getline(checkOut, line)) {
+        std::cout << line << "\n";
+    }
+    checkOut.close();
+
     return copiedLines;
 }
