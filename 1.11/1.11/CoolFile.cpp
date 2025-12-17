@@ -228,7 +228,7 @@ void CoolFile::fillTextFile(const std::string& filename, int lines)
 void CoolFile::fillTextFileUser(const std::string & filename, int lines)
 {
     std::ofstream file(filename);
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // очистить хвост после ввода числа
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "¬ведите " << lines << " строк(и) текста:\n";
     std::string line;

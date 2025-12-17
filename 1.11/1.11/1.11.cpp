@@ -123,7 +123,7 @@ int getInt(const char* num)
         }
 
         std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // очистка буфера ввода
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Ошибка ввода! Введите целое число.\n";
     }
 }
